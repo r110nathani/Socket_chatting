@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat app</title>
+</head>
+<body>
+
+    <h1>Chatting</h1>
+
+    <input type="text" id="message" placeholder="enter message">
+    <button id="sendBtn">Send</button>
+
+    <div id="chatbar"></div>
+    <script src = "/socket.io/socket.io.js"></script>
+     <script>
+        const socket = io();
+         const SendBtn = document.getElementById("sendBtn");
+         const messageInput = document.getElementById("message");  
+         const chatbar = document.getElementById("chatbar");
+
+         let userName = prompt("Please enter your name:");
+         while (!userName || userName.trim() === "") {
+            userName = prompt("Please enter your name:");
+        }
+         
+         socket.on("message" , (message) =>{
+            const p  = document.createElement("p");
+            p.innerText = `${message.name} : ${message.message}`;
+            chatbar.appendChild(p);
+         })
+
+         function sendmessage()
+         {
+            const message = messageInput.value;
+            console.log(message);
+            socket.emit('usermessage' , {name: userName , message: message});
+            messageInput.value = "";
+         }
+
+         SendBtn.addEventListener("click" , (e) =>{
+            sendmessage();
+         })
+
+         messageInput.addEventListener("keydown" , (e) =>{
+            if(e.key === 'Enter'){
+               sendmessage();
+            }
+            
+            
+         })
+     </script>
+</body>
+</html>
